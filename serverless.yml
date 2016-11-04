@@ -1,0 +1,47 @@
+service: courseRating
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  region: us-west-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:*"
+      Resource: "arn:aws:dynamodb:us-west-2:758772535015:table/*-courseRatingTable"
+
+functions:
+  getAverageRating:
+    handler: handler.getAverageRating
+    events:
+      - http:
+          path: ratings/{institution}/{courseId}/average
+          method: get
+          cors: true
+  putRating:
+    handler: handler.putRating
+    events:
+      - http:
+          path: ratings/{institution}/{courseId}
+          method: put
+          cors: true
+
+resources:
+  Resources:
+    courseRatingTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${opt:stage, self:provider.stage}-courseRatingTable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: email
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

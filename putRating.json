@@ -1,0 +1,7 @@
+{
+  "pathParameters": {
+    "courseId": "abc",
+    "institution": "monsters"
+  },
+  "body": "{\"rating\": 4, \"email\": \"bob@csu.edu\"}"
+}
